@@ -14,14 +14,15 @@ func startListener(port string){
 		log.Fatalf("Error starting listener: %v", err)
 	}else{
 		log.Println("Listening on port %s", port)
-		channel, err := listener.Accept()
+		for {
+			channel, err := listener.Accept()
 		defer channel.Close()
 
 		if err != nil {
 			log.Fatalf("Error accepting connection: %v", err)
 		}
 		
-		log.Println("Accepted connection from %s", channel.RemoteAddr())
+		log.Println("Accepted connection from %s", channel.RemoteAddr())}
 
 	}
 }
