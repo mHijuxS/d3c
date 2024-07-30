@@ -9,3 +9,9 @@
 5. Connects to the server again to verify if there are any commands to be executed locally
 
 # Steps for the server
+
+# Create Server CLI
+1. select <AgentID>
+2. show agents
+3. Type commands
+    - Stored on the message to be sent to the selected agent
