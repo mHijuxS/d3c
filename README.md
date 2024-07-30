@@ -7,5 +7,13 @@
     - Received and sent message must have a standard structure
 4. Wait an x amount of time
 5. Connects to the server again to verify if there are any commands to be executed locally
+6. Executes commands locally
+7. Send response to server
 
 # Steps for the server
+1. Listens to any inbound connection
+2. Receives the ID from the agent
+3. Checks if ID is already registered
+4. Check if there are any response from previous commands
+5. Sends message to agent
+6. Receives response from agent
