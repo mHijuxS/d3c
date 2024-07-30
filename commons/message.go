@@ -1,9 +1,9 @@
-//message structured
+// message structured
 package commons
 
 type Message struct {
-	AgentId string
+	AgentId       string
 	AgentHostname string
-	AgentCWD string
+	AgentCWD      string
+	Commands      []Commands
 }
-

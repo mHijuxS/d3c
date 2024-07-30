@@ -28,6 +28,18 @@ func agentIsRegistered(agentId string) (registered bool) {
 	return registered
 }
 
+func messageContainsResponse(message commons.Message) (containsResponse bool) {
+	containsResponse = false
+
+	for _, command := range message.Commands {
+		if len(command.Response) > 0 {
+			containsResponse = true
+			break
+		}
+	}
+	return containsResponse
+}
+
 func startListener(port string) {
 	listener, err := net.Listen("tcp", "0.0.0.0:"+port)
 	if err != nil {
@@ -48,15 +60,17 @@ func startListener(port string) {
 				// Verify if the agent is already registered
 				if agentIsRegistered(message.AgentId) {
 					log.Println("Message from Agent: ", message.AgentId)
+					if messageContainsResponse(*message) {
+						// Print the response
+						for _, command := range message.Commands {
+							log.Println("Command: ", message.Commands)
+							log.Println("Response: ", command.Response)
+						}
+					}
 				} else {
 					log.Println("Registering Agent: ", message.AgentId)
 					fieldAgents = append(fieldAgents, *message)
 				}
-
-				//
-				//
-				//
-
 				gob.NewEncoder(channel).Encode(message)
 			}
 
