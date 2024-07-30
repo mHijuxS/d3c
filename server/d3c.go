@@ -63,8 +63,7 @@ func selectHandler(command []string) {
 			log.Println("To list field agents use the command: show agents")
 		}
 	} else {
-		log.Println("Inform the agent id to select")
-		log.Println("To list field agents use the command: show agents")
+		selectedAgent = ""
 	}
 }
 
