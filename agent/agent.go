@@ -13,7 +13,7 @@ import (
 
 var (
 	message  commons.Message
-	waitTime = 30
+	waitTime = 5
 )
 
 const (

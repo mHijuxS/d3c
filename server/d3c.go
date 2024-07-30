@@ -7,9 +7,25 @@ import (
 	"net"
 )
 
+var (
+	fieldAgents = []commons.Message{}
+)
+
 func main() {
 	log.Println("Started Execution")
 	startListener("9090")
+}
+
+func agentIsRegistered(agentId string) (registered bool) {
+	registered = false
+
+	for _, agent := range fieldAgents {
+		if agent.AgentId == agentId {
+			registered = true
+			break
+		}
+	}
+	return registered
 }
 
 func startListener(port string) {
@@ -29,8 +45,13 @@ func startListener(port string) {
 
 				gob.NewDecoder(channel).Decode(message)
 
-				log.Println("Agent Message: ", message.AgentId)
-				log.Printf("New connection from %s", channel.RemoteAddr())
+				// Verify if the agent is already registered
+				if agentIsRegistered(message.AgentId) {
+					log.Println("Message from Agent: ", message.AgentId)
+				} else {
+					log.Println("Registering Agent: ", message.AgentId)
+					fieldAgents = append(fieldAgents, *message)
+				}
 
 				//
 				//
