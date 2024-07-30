@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"commons/commons"
 	"encoding/gob"
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -12,8 +11,8 @@ import (
 )
 
 var (
-	fieldAgents = []commons.Message{}
-	selectedAgent := ""
+	fieldAgents   = []commons.Message{}
+	selectedAgent = ""
 )
 
 func main() {
@@ -25,46 +24,44 @@ func main() {
 
 func cliHandler() {
 	for {
-		var input string
-		print("D3C> ")
-		_, _ = fmt.Scanln(&input)
+		if selectedAgent != "" {
+			print(selectedAgent + "@D3C# ")
+		} else {
+			print("D3C> ")
+		}
 
-	}
+		reader := bufio.NewReader(os.Stdin)
+		completeCommand, _ := reader.ReadString('\n')
 
-	reader := bufio.NewReader(os.Stdin)
-	completeCommand, _ := reader.ReadString('\n')
+		separatedCommand := strings.Split(strings.TrimSuffix(completeCommand, "\n"), " ")
+		baseCommand := strings.TrimSpace(separatedCommand[0])
 
-	separatedCommand := strings.Split(strings.TrimSuffix(completeCommand, " "), "\n")
-	baseCommand := strings.TrimSpace(separatedCommand[0])
-
-	if len(baseCommand) > 0 {
-		switch baseCommand {
-		case "show":
-			showHandler(separatedCommand)
-		case "select":
-			selectHandler(separatedCommand)
-		case "exit":
-			os.Exit(0)
-		default:
-			log.Println("Typed command does not exist!")
+		if len(baseCommand) > 0 {
+			switch baseCommand {
+			//		case "show":
+			//			showHandler(separatedCommand)
+			case "select":
+				selectHandler(separatedCommand)
+			case "exit":
+				os.Exit(0)
+			default:
+				log.Println("Typed command does not exist!")
+			}
 		}
 	}
 }
 
-func showHandler(command []string) {
-	if len(command) > 1 {
-		switch command[1] {
-		case "agents":
-			showAgents()
-		default:
-			log.Println("Typed command does not exist!")
-		}
-	}
-}
+//func showHandler(command []string) {
+//}
 
 func selectHandler(command []string) {
 	if len(command) > 1 {
-		
+		if agentIsRegistered(command[1]) {
+			selectedAgent = command[1]
+		} else {
+			log.Println("Agent not registered")
+			log.Println("To list field agents use the command: show agents")
+		}
 	} else {
 		log.Println("Inform the agent id to select")
 		log.Println("To list field agents use the command: show agents")
@@ -100,7 +97,6 @@ func startListener(port string) {
 	if err != nil {
 		log.Fatalf("Error starting listener: %v", err)
 	} else {
-		log.Printf("Listening on port %s", port)
 		for {
 			channel, err := listener.Accept()
 			defer channel.Close()
