@@ -38,8 +38,8 @@ func cliHandler() {
 
 		if len(baseCommand) > 0 {
 			switch baseCommand {
-			//		case "show":
-			//			showHandler(separatedCommand)
+			case "show":
+				showHandler(separatedCommand)
 			case "select":
 				selectHandler(separatedCommand)
 			case "exit":
@@ -51,8 +51,19 @@ func cliHandler() {
 	}
 }
 
-//func showHandler(command []string) {
-//}
+func showHandler(command []string) {
+	if len(command) > 1 {
+		switch command[1] {
+		case "agents":
+			for _, agent := range fieldAgents {
+				println("Agent: " + agent.AgentId + "->" + agent.AgentHostname + "@" + agent.AgentCWD)
+			}
+		default:
+			log.Println("Selected option does not exist!")
+		}
+
+	}
+}
 
 func selectHandler(command []string) {
 	if len(command) > 1 {
@@ -109,8 +120,8 @@ func startListener(port string) {
 
 				// Verify if the agent is already registered
 				if agentIsRegistered(message.AgentId) {
-					log.Println("Message from Agent: ", message.AgentId)
 					if messageContainsResponse(*message) {
+						log.Println("Message from Agent: ", message.AgentId)
 						// Print the response
 						for _, command := range message.Commands {
 							log.Println("Command: ", message.Commands)
@@ -118,6 +129,7 @@ func startListener(port string) {
 						}
 					}
 				} else {
+					log.Println("New connection: ", channel.RemoteAddr())
 					log.Println("Registering Agent: ", message.AgentId)
 					fieldAgents = append(fieldAgents, *message)
 				}
