@@ -1,19 +1,74 @@
 package main
 
 import (
+	"bufio"
 	"commons/commons"
 	"encoding/gob"
+	"fmt"
 	"log"
 	"net"
+	"os"
+	"strings"
 )
 
 var (
 	fieldAgents = []commons.Message{}
+	selectedAgent := ""
 )
 
 func main() {
 	log.Println("Started Execution")
-	startListener("9090")
+	go startListener("9090") // Start listener on port 9090 dettached from main thread
+
+	cliHandler()
+}
+
+func cliHandler() {
+	for {
+		var input string
+		print("D3C> ")
+		_, _ = fmt.Scanln(&input)
+
+	}
+
+	reader := bufio.NewReader(os.Stdin)
+	completeCommand, _ := reader.ReadString('\n')
+
+	separatedCommand := strings.Split(strings.TrimSuffix(completeCommand, " "), "\n")
+	baseCommand := strings.TrimSpace(separatedCommand[0])
+
+	if len(baseCommand) > 0 {
+		switch baseCommand {
+		case "show":
+			showHandler(separatedCommand)
+		case "select":
+			selectHandler(separatedCommand)
+		case "exit":
+			os.Exit(0)
+		default:
+			log.Println("Typed command does not exist!")
+		}
+	}
+}
+
+func showHandler(command []string) {
+	if len(command) > 1 {
+		switch command[1] {
+		case "agents":
+			showAgents()
+		default:
+			log.Println("Typed command does not exist!")
+		}
+	}
+}
+
+func selectHandler(command []string) {
+	if len(command) > 1 {
+		
+	} else {
+		log.Println("Inform the agent id to select")
+		log.Println("To list field agents use the command: show agents")
+	}
 }
 
 func agentIsRegistered(agentId string) (registered bool) {

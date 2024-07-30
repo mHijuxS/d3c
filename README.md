@@ -11,18 +11,15 @@
 7. Send response to server
 
 # Steps for the server
-<<<<<<< HEAD
-
-# Create Server CLI
-1. select <AgentID>
-2. show agents
-3. Type commands
-    - Stored on the message to be sent to the selected agent
-=======
 1. Listens to any inbound connection
 2. Receives the ID from the agent
 3. Checks if ID is already registered
 4. Check if there are any response from previous commands
 5. Sends message to agent
 6. Receives response from agent
->>>>>>> df421102b8fe12006d1e6f17ddaacbd81f7f40f5
+
+# Create Server CLI
+1. select <AgentID>
+2. show agents
+3. Type commands
+    - Stored on the message to be sent to the selected agent
