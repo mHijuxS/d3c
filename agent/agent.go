@@ -1,14 +1,14 @@
 package main
 
 import (
-	"commons/commons"
+	"commons/commons/helpers"
+	commons "commons/commons/structures"
 	"crypto/md5"
 	"encoding/gob"
 	"encoding/hex"
 	"log"
 	"net"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -57,9 +57,8 @@ func executeCommand(command string) (response string) {
 	// htb -> modify the wait time
 	// htb 10 -> modify the wait time to 10 seconds
 
-	separatedCommand := strings.Split(strings.TrimSuffix(command, "\n"), " ")
-
-	baseCommand = separatedCommand[0]
+	separatedCommand := helpers.SeparateCommand(command)
+	baseCommand := separatedCommand[0]
 
 	switch baseCommand {
 	case "htb":

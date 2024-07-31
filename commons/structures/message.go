@@ -1,5 +1,5 @@
 // message structured
-package commons
+package structures
 
 type Message struct {
 	AgentId       string

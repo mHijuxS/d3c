@@ -2,12 +2,12 @@ package main
 
 import (
 	"bufio"
-	"commons/commons"
+	"commons/commons/helpers"
+	commons "commons/commons/structures"
 	"encoding/gob"
 	"log"
 	"net"
 	"os"
-	"strings"
 )
 
 var (
@@ -33,8 +33,8 @@ func cliHandler() {
 		reader := bufio.NewReader(os.Stdin)
 		completeCommand, _ := reader.ReadString('\n')
 
-		separatedCommand := strings.Split(strings.TrimSuffix(completeCommand, "\n"), " ")
-		baseCommand := strings.TrimSpace(separatedCommand[0])
+		separatedCommand := helpers.SeparateCommand(completeCommand)
+		baseCommand := separatedCommand[0]
 
 		if len(baseCommand) > 0 {
 			switch baseCommand {
