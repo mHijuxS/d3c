@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"commons/commons/helpers"
+	"commons/commons/structures"
 	commons "commons/commons/structures"
 	"encoding/gob"
 	"log"
@@ -144,22 +145,25 @@ func startListener(port string) {
 				// Verify if the agent is already registered
 				if agentIsRegistered(message.AgentId) {
 					if messageContainsResponse(*message) {
-						log.Println("Message from Agent: ", message.AgentId)
+						log.Println("Response from host: ", message.AgentHostname)
 						// Print the response
 						for _, command := range message.Commands {
-							log.Println("Command: ", message.Commands)
+							log.Println("Response from command: ", command.Command)
 							log.Println("Response: ", command.Response)
 						}
 					}
+					// Send queued commands to agent
+				gob.NewEncoder(channel).Encode(fieldAgents[fieldAgentPosition(message.AgentId)])
+				// Clear the agent queued commands
+				fieldAgents[fieldAgentPosition(message.AgentId)].Commands = []structures.Commands{}
 				} else {
 					log.Println("New connection: ", channel.RemoteAddr())
 					log.Println("Registering Agent: ", message.AgentId)
 					fieldAgents = append(fieldAgents, *message)
+					gob.NewEncoder(channel).Encode(message)
 				}
 
-				// Send queued commands to agent
-
-				gob.NewEncoder(channel).Encode(fieldAgents[fieldAgentPosition(message.AgentId)])
+				
 			}
 
 		}

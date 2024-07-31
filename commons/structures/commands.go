@@ -1,4 +1,4 @@
-package commons
+package structures
 
 type Commands struct {
 	Command  string
