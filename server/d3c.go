@@ -42,10 +42,21 @@ func cliHandler() {
 				showHandler(separatedCommand)
 			case "select":
 				selectHandler(separatedCommand)
-			case "exit":
-				os.Exit(0)
 			default:
-				log.Println("Typed command does not exist!")
+				if selectedAgent != "" {
+					// Send command to selected agent
+					command := &commons.Commands{}
+					command.Command = completeCommand
+
+					for index, agent := range fieldAgents {
+						if agent.AgentId == selectedAgent {
+							// Send cli command to agent
+							fieldAgents[index].Commands = append(fieldAgents[index].Commands, *command)
+						}
+					}
+				} else {
+					log.Println("Typed command does not exist!")
+				}
 			}
 		}
 	}
