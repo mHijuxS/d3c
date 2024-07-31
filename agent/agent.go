@@ -35,6 +35,7 @@ func main() {
 		defer channel.Close()
 
 		gob.NewEncoder(channel).Encode(message)
+		
 		gob.NewDecoder(channel).Decode(&message)
 
 		time.Sleep(time.Duration(waitTime) * time.Second)

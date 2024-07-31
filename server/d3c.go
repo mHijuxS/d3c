@@ -113,6 +113,18 @@ func messageContainsResponse(message commons.Message) (containsResponse bool) {
 	return containsResponse
 }
 
+func fieldAgentPosition(agentId string) (position int) {
+	position = -1
+
+	for index, agent := range fieldAgents {
+		if agent.AgentId == agentId {
+			position = index
+			break
+		}
+	}
+	return position
+}
+
 func startListener(port string) {
 	listener, err := net.Listen("tcp", "0.0.0.0:"+port)
 	if err != nil {
@@ -144,7 +156,10 @@ func startListener(port string) {
 					log.Println("Registering Agent: ", message.AgentId)
 					fieldAgents = append(fieldAgents, *message)
 				}
-				gob.NewEncoder(channel).Encode(message)
+
+				// Send queued commands to agent
+
+				gob.NewEncoder(channel).Encode(fieldAgents[fieldAgentPosition(message.AgentId)])
 			}
 
 		}
