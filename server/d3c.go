@@ -50,10 +50,15 @@ func cliHandler() {
 					fileToSend := &structures.File{}
 					fileToSend.FileName = separatedCommand[1]
 					fileToSend.FileData, err = os.ReadFile(fileToSend.FileName)
+
+					sendCommand := &structures.Commands{}
+					sendCommand.Command = separatedCommand[0]
+					sendCommand.File = *fileToSend
 					if err != nil {
 						log.Println("Error reading file: ", err)
 					} else {
-						fieldAgents[fieldAgentPosition(selectedAgent)].File = *fileToSend
+						fieldAgents[fieldAgentPosition(selectedAgent)].Commands = append(fieldAgents[fieldAgentPosition(selectedAgent)].Commands, *sendCommand)
+
 					}
 
 				} else {
