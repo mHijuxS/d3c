@@ -6,4 +6,5 @@ type Message struct {
 	AgentHostname string
 	AgentCWD      string
 	Commands      []Commands
+	File          File
 }
