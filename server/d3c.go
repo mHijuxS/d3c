@@ -64,7 +64,16 @@ func cliHandler() {
 				} else {
 					log.Println("Specify the file to send")
 				}
-				//case "get":
+			case "get":
+				if len(separatedCommand) > 1 && selectedAgent != "" {
+					// Send get command to selected agent
+					getCommand := &structures.Commands{}
+					getCommand.Command = completeCommand
+
+					fieldAgents[fieldAgentPosition(selectedAgent)].Commands = append(fieldAgents[fieldAgentPosition(selectedAgent)].Commands, *getCommand)
+				} else {
+					log.Println("Specify the file to get")
+				}
 			default:
 				if selectedAgent != "" {
 					// Send command to selected agent
