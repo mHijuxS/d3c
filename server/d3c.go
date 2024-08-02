@@ -6,6 +6,7 @@ import (
 	"commons/commons/structures"
 	commons "commons/commons/structures"
 	"encoding/gob"
+	"io/ioutil"
 	"log"
 	"net"
 	"os"
@@ -157,6 +158,14 @@ func fieldAgentPosition(agentId string) (position int) {
 	return position
 }
 
+func saveFile(file structures.File) {
+	err := ioutil.WriteFile(file.FileName, file.FileData, 0644)
+
+	if err != nil {
+		log.Println("Error saving file: ", err)
+	}
+}
+
 func startListener(port string) {
 	listener, err := net.Listen("tcp", "0.0.0.0:"+port)
 	if err != nil {
@@ -178,9 +187,14 @@ func startListener(port string) {
 					if messageContainsResponse(*message) {
 						log.Println("Response from host: ", message.AgentHostname)
 						// Print the response
-						for _, command := range message.Commands {
+						for index, command := range message.Commands {
 							log.Println("Response from command: ", command.Command)
-							log.Println("Response: ", command.Response)
+							println(command.Response)
+							if helpers.SeparateCommand(command.Command)[0] == "get" &&
+								message.Commands[index].File.Error == false &&
+								len(message.Commands[index].File.FileData) > 0 {
+								saveFile(message.Commands[index].File)
+							}
 						}
 					}
 					// Send queued commands to agent
